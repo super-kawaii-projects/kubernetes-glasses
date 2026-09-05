@@ -1,0 +1,121 @@
+# Default values for kubernetes-glasses.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# -- Container image shared by all three components (controller, frontend, daemonset)
+image:
+  repository: ghcr.io/super-kawaii-projects/kubernetes-glasses
+  # -- Image tag. Defaults to the chart's appVersion if empty.
+  tag: ""
+  pullPolicy: IfNotPresent
+
+# -- Image pull secrets for private registries
+imagePullSecrets: []
+
+# -- Override the generated name
+nameOverride: ""
+# -- Override the full generated name
+fullnameOverride: ""
+
+# ─── Controller ───────────────────────────────────────────────────────────────
+# The controller watches the Kubernetes API and serves cluster state to the frontend.
+controller:
+  enabled: true
+  replicaCount: 1
+  # -- Command entrypoint override (image serves multiple binaries)
+  command: ["/usr/local/bin/controller"]
+  service:
+    type: ClusterIP
+    port: 8080
+  env:
+    RUST_LOG: "controller=info"
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+# ─── Frontend ───────────────────────────────────────────────────────────────
+# The Leptos web UI. Talks to the controller over HTTP.
+frontend:
+  enabled: true
+  replicaCount: 1
+  command: ["/usr/local/bin/frontend"]
+  service:
+    type: ClusterIP
+    port: 3000
+  env:
+    RUST_LOG: "info"
+    LEPTOS_SITE_ADDR: "0.0.0.0:3000"
+    LEPTOS_SITE_ROOT: "target/site"
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+# ─── DaemonSet ───────────────────────────────────────────────────────────────
+# Optional per-node agent that reports node-level data to the controller.
+daemonset:
+  enabled: true
+  command: ["/usr/local/bin/daemonset"]
+  healthPort: 9090
+  env:
+    KUBELET_PORT: "10250"
+    SYNC_INTERVAL_SECS: "15"
+    RUST_LOG: "daemonset=info"
+  resources:
+    requests:
+      cpu: 50m
+      memory: 32Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi
+  # -- Run on every node including control-plane by tolerating all taints
+  tolerateAllTaints: true
+  nodeSelector: {}
+  # -- Extra tolerations appended to the default set
+  extraTolerations: []
+
+# ─── RBAC & ServiceAccounts ─────────────────────────────────────────────────
+rbac:
+  # -- Create the ClusterRoles/Bindings the controller and daemonset need
+  create: true
+
+serviceAccount:
+  # -- Create ServiceAccounts for the controller and daemonset
+  create: true
+  annotations: {}
+
+# ─── Ingress (optional) ──────────────────────────────────────────────────────
+# Expose the frontend outside the cluster. Off by default (use port-forward for local).
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # cert-manager.io/cluster-issuer: letsencrypt-prod
+  hosts:
+    - host: kubernetes-glasses.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+    # - secretName: kubernetes-glasses-tls
+    #   hosts:
+    #     - kubernetes-glasses.local
+
+# -- Extra pod annotations applied to all components
+podAnnotations: {}
+# -- Extra pod labels applied to all components
+podLabels: {}

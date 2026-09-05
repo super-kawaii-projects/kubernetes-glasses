@@ -1,0 +1,87 @@
+{{- if .Values.daemonset.enabled }}
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ include "kubernetes-glasses.fullname" . }}-daemonset
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "kubernetes-glasses.labels" . | nindent 4 }}
+    app.kubernetes.io/component: daemonset
+spec:
+  selector:
+    matchLabels:
+      {{- include "kubernetes-glasses.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: daemonset
+  template:
+    metadata:
+      labels:
+        {{- include "kubernetes-glasses.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: daemonset
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      serviceAccountName: {{ include "kubernetes-glasses.daemonsetServiceAccountName" . }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      tolerations:
+        {{- if .Values.daemonset.tolerateAllTaints }}
+        - operator: Exists
+        {{- end }}
+        {{- with .Values.daemonset.extraTolerations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      containers:
+        - name: daemonset
+          image: {{ include "kubernetes-glasses.image" . }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- with .Values.daemonset.command }}
+          command:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          ports:
+            - name: health
+              containerPort: {{ .Values.daemonset.healthPort }}
+              protocol: TCP
+          env:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: CONTROLLER_URL
+              value: "ws://{{ include "kubernetes-glasses.controllerHost" . }}:{{ .Values.controller.service.port }}/ws/daemonset"
+            - name: HEALTH_PORT
+              value: {{ .Values.daemonset.healthPort | quote }}
+            {{- range $key, $val := .Values.daemonset.env }}
+            - name: {{ $key }}
+              value: {{ $val | quote }}
+            {{- end }}
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: health
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: health
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          resources:
+            {{- toYaml .Values.daemonset.resources | nindent 12 }}
+      {{- with .Values.daemonset.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+{{- end }}

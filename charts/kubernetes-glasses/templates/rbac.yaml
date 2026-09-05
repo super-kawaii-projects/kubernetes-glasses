@@ -1,0 +1,70 @@
+{{- if .Values.rbac.create }}
+{{- if .Values.controller.enabled }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "kubernetes-glasses.fullname" . }}-controller
+  labels:
+    {{- include "kubernetes-glasses.labels" . | nindent 4 }}
+    app.kubernetes.io/component: controller
+rules:
+  - apiGroups: [""]
+    resources: ["nodes", "pods", "services", "namespaces", "events", "endpoints"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["apps"]
+    resources: ["deployments", "replicasets", "daemonsets", "statefulsets"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["networking.k8s.io"]
+    resources: ["ingresses", "networkpolicies"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "kubernetes-glasses.fullname" . }}-controller
+  labels:
+    {{- include "kubernetes-glasses.labels" . | nindent 4 }}
+    app.kubernetes.io/component: controller
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "kubernetes-glasses.controllerServiceAccountName" . }}
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: ClusterRole
+  name: {{ include "kubernetes-glasses.fullname" . }}-controller
+  apiGroup: rbac.authorization.k8s.io
+{{- end }}
+{{- if .Values.daemonset.enabled }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "kubernetes-glasses.fullname" . }}-daemonset
+  labels:
+    {{- include "kubernetes-glasses.labels" . | nindent 4 }}
+    app.kubernetes.io/component: daemonset
+rules:
+  - apiGroups: [""]
+    resources: ["nodes", "nodes/proxy", "nodes/stats", "nodes/log", "nodes/metrics"]
+    verbs: ["get", "list"]
+  - apiGroups: [""]
+    resources: ["pods", "pods/log"]
+    verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "kubernetes-glasses.fullname" . }}-daemonset
+  labels:
+    {{- include "kubernetes-glasses.labels" . | nindent 4 }}
+    app.kubernetes.io/component: daemonset
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "kubernetes-glasses.daemonsetServiceAccountName" . }}
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: ClusterRole
+  name: {{ include "kubernetes-glasses.fullname" . }}-daemonset
+  apiGroup: rbac.authorization.k8s.io
+{{- end }}
+{{- end }}

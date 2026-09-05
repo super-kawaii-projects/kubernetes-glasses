@@ -1,0 +1,19 @@
+apiVersion: v2
+name: kubernetes-glasses
+description: Real-time Kubernetes cluster visualization — nodes, pods, services, and live topology
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+keywords:
+  - kubernetes
+  - visualization
+  - observability
+  - topology
+  - dashboard
+home: https://github.com/super-kawaii-projects/kubernetes-glasses
+sources:
+  - https://github.com/super-kawaii-projects/kubernetes-glasses
+maintainers:
+  - name: Stillwater Strategic Solutions LLC
+    email: michaelisaacs121092@gmail.com
+icon: https://raw.githubusercontent.com/super-kawaii-projects/kubernetes-glasses/main/frontend/public/favicon.ico
