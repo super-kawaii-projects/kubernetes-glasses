@@ -1,0 +1,94 @@
+kubernetes-glasses Software License Agreement
+
+Copyright (c) 2026 Stillwater Strategic Solutions LLC. All rights reserved.
+
+This software and its associated source code, documentation, and related
+materials (collectively, the "Software") are the proprietary property of
+Stillwater Strategic Solutions LLC ("Licensor"). The Software is made
+source-available for transparency and evaluation. It is NOT open source and
+is NOT released under any Open Source Initiative (OSI) approved license.
+
+1. DEFINITIONS
+
+   "You" (or "Licensee") means the individual or entity exercising rights
+   under this License.
+
+   "Non-Commercial Use" means use by an individual for personal learning,
+   experimentation, evaluation, or testing that is not intended for or
+   directed toward commercial advantage or monetary compensation, and that
+   is not performed on behalf of, or for the benefit of, any business,
+   organization, or government entity.
+
+   "Commercial Use" means any use that is not Non-Commercial Use, including
+   without limitation: use in a production environment; use by or on behalf
+   of a company, organization, or government entity; use to provide a service
+   to third parties; or use that supports revenue-generating activity.
+
+2. GRANT OF LIMITED LICENSE
+
+   Subject to the terms of this License, Licensor grants You a limited,
+   revocable, non-exclusive, non-transferable, non-sublicensable license to:
+
+   (a) view and access the source code of the Software; and
+   (b) download, compile, install, and run the Software solely for
+       Non-Commercial Use.
+
+3. RESTRICTIONS
+
+   Except as expressly permitted in Section 2, You may NOT, without a
+   separate written commercial license from Licensor:
+
+   (a) use the Software for any Commercial Use;
+   (b) copy, modify, adapt, translate, or create derivative works of the
+       Software;
+   (c) distribute, publish, sublicense, sell, rent, lease, or otherwise
+       make the Software available to any third party;
+   (d) host or offer the Software (or any derivative) as a service; or
+   (e) remove, alter, or obscure any copyright, trademark, or other
+       proprietary notices.
+
+4. COMMERCIAL LICENSING
+
+   Commercial Use requires a separate paid commercial license. To obtain a
+   commercial license, contact Stillwater Strategic Solutions LLC at
+   michaelisaacs121092@gmail.com.
+
+5. RESERVATION OF RIGHTS
+
+   All rights not expressly granted in this License are reserved by Licensor.
+   No rights are granted by implication, estoppel, or otherwise. Licensor may
+   change the terms of this License, or release future versions of the
+   Software under different terms, at its sole discretion. Any such change
+   does not affect versions already obtained under this License.
+
+6. TERMINATION
+
+   This License terminates automatically if You breach any of its terms. Upon
+   termination, You must cease all use of the Software and destroy all copies
+   in Your possession or control. Sections 3, 5, 7, 8, and 9 survive
+   termination.
+
+7. NO WARRANTY
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT.
+
+8. LIMITATION OF LIABILITY
+
+   TO THE MAXIMUM EXTENT PERMITTED BY LAW, IN NO EVENT SHALL LICENSOR BE
+   LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+   CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION WITH
+   THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+9. GENERAL
+
+   This License constitutes the entire agreement between You and Licensor
+   regarding the Software and supersedes all prior understandings. If any
+   provision is held unenforceable, the remaining provisions remain in full
+   force. Licensor's failure to enforce any provision is not a waiver of its
+   right to do so later.
+
+For commercial licensing inquiries, contact:
+Stillwater Strategic Solutions LLC
+michaelisaacs121092@gmail.com

@@ -1,0 +1,78 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kubernetes-glasses
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kubernetes-glasses-controller
+  namespace: kubernetes-glasses
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kubernetes-glasses-daemonset
+  namespace: kubernetes-glasses
+
+---
+# Controller needs read access to cluster-wide resources
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubernetes-glasses-controller
+rules:
+  - apiGroups: [""]
+    resources: ["nodes", "pods", "services", "namespaces", "events", "endpoints"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["apps"]
+    resources: ["deployments", "replicasets", "daemonsets", "statefulsets"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["networking.k8s.io"]
+    resources: ["ingresses", "networkpolicies"]
+    verbs: ["get", "list", "watch"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kubernetes-glasses-controller
+subjects:
+  - kind: ServiceAccount
+    name: kubernetes-glasses-controller
+    namespace: kubernetes-glasses
+roleRef:
+  kind: ClusterRole
+  name: kubernetes-glasses-controller
+  apiGroup: rbac.authorization.k8s.io
+
+---
+# DaemonSet needs access to local kubelet API
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubernetes-glasses-daemonset
+rules:
+  - apiGroups: [""]
+    resources: ["nodes", "nodes/proxy", "nodes/stats", "nodes/log", "nodes/metrics"]
+    verbs: ["get", "list"]
+  - apiGroups: [""]
+    resources: ["pods", "pods/log"]
+    verbs: ["get", "list"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kubernetes-glasses-daemonset
+subjects:
+  - kind: ServiceAccount
+    name: kubernetes-glasses-daemonset
+    namespace: kubernetes-glasses
+roleRef:
+  kind: ClusterRole
+  name: kubernetes-glasses-daemonset
+  apiGroup: rbac.authorization.k8s.io

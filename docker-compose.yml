@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+  controller:
+    build:
+      context: .
+      target: controller
+    ports:
+      - "8080:8080"
+    environment:
+      - RUST_LOG=info
+      - KUBECONFIG=/app/.kube/config
+    volumes:
+      - ${HOME}/.kube:/app/.kube:ro
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      target: frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - RUST_LOG=info
+      - CONTROLLER_URL=http://controller:8080
+    depends_on:
+      - controller
+    restart: unless-stopped
+
+  # DaemonSet runs in-cluster only — not in docker-compose
+  # Use deploy/daemonset.yaml for K8s deployment

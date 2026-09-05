@@ -1,0 +1,77 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kubernetes-glasses-frontend
+  namespace: kubernetes-glasses
+  labels:
+    app.kubernetes.io/name: kubernetes-glasses
+    app.kubernetes.io/component: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: kubernetes-glasses
+      app.kubernetes.io/component: frontend
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: kubernetes-glasses
+        app.kubernetes.io/component: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: kubernetes-glasses:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+          env:
+            - name: CONTROLLER_URL
+              value: "http://kubernetes-glasses-controller.kubernetes-glasses.svc.cluster.local:8080"
+            - name: RUST_LOG
+              value: "info"
+            - name: LEPTOS_SITE_ADDR
+              value: "0.0.0.0:3000"
+            - name: LEPTOS_SITE_ROOT
+              value: "target/site"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kubernetes-glasses-frontend
+  namespace: kubernetes-glasses
+  labels:
+    app.kubernetes.io/name: kubernetes-glasses
+    app.kubernetes.io/component: frontend
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 3000
+      targetPort: http
+      protocol: TCP
+  selector:
+    app.kubernetes.io/name: kubernetes-glasses
+    app.kubernetes.io/component: frontend
