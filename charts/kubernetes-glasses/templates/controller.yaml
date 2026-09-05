@@ -33,12 +33,8 @@ spec:
       {{- end }}
       containers:
         - name: controller
-          image: {{ include "kubernetes-glasses.image" . }}
+          image: {{ include "kubernetes-glasses.image" (dict "root" . "component" "controller") }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          {{- with .Values.controller.command }}
-          command:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
           ports:
             - name: http
               containerPort: {{ .Values.controller.service.port }}

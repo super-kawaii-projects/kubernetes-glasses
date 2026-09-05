@@ -2,9 +2,12 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-# -- Container image shared by all three components (controller, frontend, daemonset)
+# -- Container images. Each component has its own image (built from separate
+# Dockerfile targets and published as separate ghcr.io packages).
 image:
-  repository: ghcr.io/super-kawaii-projects/kubernetes-glasses
+  # -- Registry + repository prefix. Component name is appended: <prefix>-controller, etc.
+  registry: ghcr.io/super-kawaii-projects
+  repositoryPrefix: kubernetes-glasses
   # -- Image tag. Defaults to the chart's appVersion if empty.
   tag: ""
   pullPolicy: IfNotPresent
@@ -22,8 +25,6 @@ fullnameOverride: ""
 controller:
   enabled: true
   replicaCount: 1
-  # -- Command entrypoint override (image serves multiple binaries)
-  command: ["/usr/local/bin/controller"]
   service:
     type: ClusterIP
     port: 8080
@@ -45,7 +46,6 @@ controller:
 frontend:
   enabled: true
   replicaCount: 1
-  command: ["/usr/local/bin/frontend"]
   service:
     type: ClusterIP
     port: 3000
@@ -68,7 +68,6 @@ frontend:
 # Optional per-node agent that reports node-level data to the controller.
 daemonset:
   enabled: true
-  command: ["/usr/local/bin/daemonset"]
   healthPort: 9090
   env:
     KUBELET_PORT: "10250"

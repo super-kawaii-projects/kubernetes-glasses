@@ -49,11 +49,14 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
-The image reference, resolving tag to appVersion when unset.
+Per-component image reference. Pass the component name as the second arg.
+Usage: include "kubernetes-glasses.image" (dict "root" . "component" "controller")
+Produces: ghcr.io/super-kawaii-projects/kubernetes-glasses-controller:<tag>
 */}}
 {{- define "kubernetes-glasses.image" -}}
-{{- $tag := .Values.image.tag | default .Chart.AppVersion -}}
-{{- printf "%s:%s" .Values.image.repository $tag -}}
+{{- $root := .root -}}
+{{- $tag := $root.Values.image.tag | default $root.Chart.AppVersion -}}
+{{- printf "%s/%s-%s:%s" $root.Values.image.registry $root.Values.image.repositoryPrefix .component $tag -}}
 {{- end }}
 
 {{/*

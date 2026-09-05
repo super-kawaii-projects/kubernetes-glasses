@@ -39,12 +39,8 @@ spec:
         {{- end }}
       containers:
         - name: daemonset
-          image: {{ include "kubernetes-glasses.image" . }}
+          image: {{ include "kubernetes-glasses.image" (dict "root" . "component" "daemonset") }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          {{- with .Values.daemonset.command }}
-          command:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
           ports:
             - name: health
               containerPort: {{ .Values.daemonset.healthPort }}

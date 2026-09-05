@@ -32,12 +32,8 @@ spec:
       {{- end }}
       containers:
         - name: frontend
-          image: {{ include "kubernetes-glasses.image" . }}
+          image: {{ include "kubernetes-glasses.image" (dict "root" . "component" "frontend") }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          {{- with .Values.frontend.command }}
-          command:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
           ports:
             - name: http
               containerPort: {{ .Values.frontend.service.port }}
